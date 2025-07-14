@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.get('/', (req, res) => {
-  res.send('Restaurant Useful API 555')
+  res.send('Restaurant Useful API')
 })
 
 app.listen(PORT, () => {
