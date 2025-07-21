@@ -3,38 +3,46 @@ import { useParams } from 'react-router'
 import Navbar from '../Component/Navbar'
 
 const UpdateRestaurant = () => {
-    // Get the restaurant ID
     const { id } = useParams();
     const [restaurant, setRestaurant] = React.useState({
         title: '',
         type: '',
         img: '',
     });
-    
-    // Get the restaurant by ID
-    React.useEffect(()=>{
-        fetch(`http://localhost:3001/restaurants/${id}`)
-        .then((response) => response.json())
-        .then((data) => {
-            setRestaurant(data);
-        })
+
+    React.useEffect(() => {
+        fetch(`http://localhost:5000/api/v1/restaurants/${id}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setRestaurant({
+                    title: data.name || '',
+                    type: data.type || '',
+                    img: data.imageURL || ''
+                });
+            });
     }, [id]);
-    
+
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setRestaurant({...restaurant, [name]: value});
+        const { name, value } = e.target;
+        setRestaurant({ ...restaurant, [name]: value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        const updatedRestaurant = {
+            name: restaurant.title,
+            type: restaurant.type,
+            imageURL: restaurant.img
+        };
+
         try {
-            const response = await fetch(`http://localhost:3001/restaurants/${id}`, {
+            const response = await fetch(`http://localhost:5000/api/v1/restaurants/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(restaurant),
+                body: JSON.stringify(updatedRestaurant),
             });
 
             if (response.ok) {
@@ -45,7 +53,7 @@ const UpdateRestaurant = () => {
             }
         } catch (error) {
             console.log('Error updating restaurant:', error);
-            alert('Error updating restaurant'); 
+            alert('Error updating restaurant');
         }
     };
 
@@ -53,7 +61,7 @@ const UpdateRestaurant = () => {
         <div className="min-h-screen bg-base-200">
             <Navbar />
             <div className="flex flex-col items-center justify-center mt-10">
-                <h1 className="text-4xl font-bold mb-6">Update Restaurant</h1> {/* Changed title */}
+                <h1 className="text-4xl font-bold mb-6">Update Restaurant</h1>
                 <div className="card w-full max-w-md bg-base-100 shadow-xl">
                     <figure className="px-10 pt-10">
                         <img
@@ -108,7 +116,7 @@ const UpdateRestaurant = () => {
                             </div>
                             <div className="card-actions justify-end">
                                 <button type="submit" className="btn btn-primary w-full">
-                                    Update Restaurant  {/* Changed button text */}
+                                    Update Restaurant
                                 </button>
                             </div>
                         </form>

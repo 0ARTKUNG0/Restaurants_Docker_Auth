@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
-import Navbar from '../Component/Navbar'
-import Restaurant from '../Component/Restaurant'
+import React, { useState, useEffect } from 'react';
+import Navbar from '../Component/Navbar';
+import Restaurant from '../Component/Restaurant';
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -9,7 +9,7 @@ const Home = () => {
 
   const fetchRestaurants = async () => {
     try {
-      const response = await fetch('http://localhost:3001/restaurants');
+      const response = await fetch('http://localhost:5000/api/v1/restaurants');
       const data = await response.json();
       setRestaurants(data);
       setFilteredRestaurants(data);
@@ -23,13 +23,14 @@ const Home = () => {
   useEffect(() => {
     fetchRestaurants();
   }, []);
+
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     if (searchTerm === '') {
       setFilteredRestaurants(restaurants);
     } else {
       const filtered = restaurants.filter(restaurant =>
-        restaurant.title.toLowerCase().includes(searchTerm) ||
+        restaurant.name.toLowerCase().includes(searchTerm) ||
         restaurant.type.toLowerCase().includes(searchTerm)
       );
       setFilteredRestaurants(filtered);
@@ -51,13 +52,13 @@ const Home = () => {
       </div>
     );
   }
+
   return (
     <div className='container mx-auto'>
       <Navbar />
       <div className='title justify-center items-center flex flex-col mt-10'>
         <h1 className='text-4xl font-bold mb-4'>Grab Restaurant</h1>
       </div>
-      
       <div className='flex justify-center items-center flex-col mt-10 mb-8'>
         <div className="relative w-full max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -78,7 +79,7 @@ const Home = () => {
         onRefresh={handleRefresh}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

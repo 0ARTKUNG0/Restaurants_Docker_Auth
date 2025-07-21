@@ -15,9 +15,9 @@ const Restaurant = ({ restaurants = [], onRefresh }) => {
             <Card 
               key={restaurant.id}
               id={restaurant.id}
-              title={restaurant.title} 
-              type={restaurant.type} 
-              img={restaurant.img}
+              name={restaurant.name}
+              type={restaurant.type}
+              imageURL={restaurant.imageURL}
               onDelete={handleDelete}
             />
           ))

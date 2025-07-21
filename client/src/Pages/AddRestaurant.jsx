@@ -9,27 +9,42 @@ const AddRestaurant = () => {
     });
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setRestaurant({...restaurant, [name]: value});
+        const { name, value } = e.target;
+        setRestaurant(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
+        if (!restaurant.title || !restaurant.type || !restaurant.img) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        // Send exactly what backend expects: title, type, img
+        const newRestaurant = {
+            title: restaurant.title,
+            type: restaurant.type,
+            img: restaurant.img
+        };
+
+        console.log('Submitting payload:', newRestaurant);
+
         try {
-            const response = await fetch('http://localhost:3001/restaurants', {
+            const response = await fetch('http://localhost:5000/api/v1/restaurants', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(restaurant),
+                body: JSON.stringify(newRestaurant),
             });
 
             if (response.ok) {
                 alert('Restaurant added successfully');
                 setRestaurant({ title: '', type: '', img: '' });
             } else {
-                alert('Failed to add restaurant');
+                const errorData = await response.json().catch(() => ({}));
+                alert('Failed to add restaurant: ' + (errorData.message || response.statusText));
             }
         } catch (error) {
             console.log('Error adding restaurant:', error);
