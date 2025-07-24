@@ -1,7 +1,10 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 import Home from "../Pages/Home";
 import AddRestaurant from "../Pages/AddRestaurant";
 import UpdateRestaurant from "../Pages/UpdateRestaurant";
+import LoginRestaurant from "../Pages/LoginRestaurant";
+import RegisterRestaurant from "../Pages/RegisterRestaurant";
+import ProtectedRoute from "../Component/ProtectedRoute";
 
 const router = createBrowserRouter([
     {
@@ -10,11 +13,28 @@ const router = createBrowserRouter([
     },
     {
         path: "/add-restaurant",
-        element: <AddRestaurant />,
+        element: (
+            <ProtectedRoute>
+                <AddRestaurant />
+            </ProtectedRoute>
+        ),
     },
     {
         path: "/update-restaurant/:id",
-        element: <UpdateRestaurant />,
+        element: (
+            <ProtectedRoute>
+                <UpdateRestaurant />
+            </ProtectedRoute>
+        ),
+    },
+    {
+        path: "/login",
+        element: <LoginRestaurant />,
+    },
+    {
+        path: "/register",
+        element: <RegisterRestaurant />,
     },
 ]);
+
 export default router;

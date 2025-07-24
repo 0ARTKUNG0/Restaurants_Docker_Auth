@@ -1,5 +1,6 @@
 import React from 'react'
 import Navbar from '../Component/Navbar'
+import fetchWithAuth from '../utils/api';
 
 const AddRestaurant = () => {
     const [restaurant, setRestaurant] = React.useState({
@@ -31,11 +32,8 @@ const AddRestaurant = () => {
         console.log('Submitting payload:', newRestaurant);
 
         try {
-            const response = await fetch('http://localhost:5000/api/v1/restaurants', {
+            const response = await fetchWithAuth('/v1/restaurants', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(newRestaurant),
             });
 

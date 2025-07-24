@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import Navbar from '../Component/Navbar'
+import fetchWithAuth from '../utils/api';
 
 const UpdateRestaurant = () => {
     const { id } = useParams();
@@ -11,7 +12,7 @@ const UpdateRestaurant = () => {
     });
 
     React.useEffect(() => {
-        fetch(`http://localhost:5000/api/v1/restaurants/${id}`)
+        fetchWithAuth(`/v1/restaurants/${id}`)
             .then((response) => response.json())
             .then((data) => {
                 setRestaurant({
@@ -37,11 +38,8 @@ const UpdateRestaurant = () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:5000/api/v1/restaurants/${id}`, {
+            const response = await fetchWithAuth(`/v1/restaurants/${id}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(updatedRestaurant),
             });
 

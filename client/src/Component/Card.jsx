@@ -1,10 +1,15 @@
 import React from 'react'
+import fetchWithAuth from '../utils/api'
 
 const Card = (props) => {
+  // Check if user is logged in
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isLoggedIn = !!user.accessToken;
+
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this restaurant?')) {
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/restaurants/${props.id}`, {
+        const response = await fetchWithAuth(`/v1/restaurants/${props.id}`, {
           method: 'DELETE',
         });
 
@@ -22,9 +27,11 @@ const Card = (props) => {
       }
     }
   };
+  
   const handleEdit = () => {
     window.location.href = `/update-restaurant/${props.id}`;
   };
+  
   return (
     <div className="card bg-gray-800 w-96 shadow-lg rounded-lg overflow-hidden">
       <figure className="h-48 max-h-48 overflow-hidden">
@@ -37,23 +44,25 @@ const Card = (props) => {
       <div className="card-body p-4 text-white">
         <h2 className="card-title text-white text-lg font-semibold mb-2">{props.name}</h2>
         <p className="text-gray-300 text-sm mb-4">{props.type}</p>
-        <div className="card-actions justify-end gap-2">
-          <button 
-            onClick={handleDelete}
-            className="btn btn-error btn-sm px-4 py-2"
-          >
-            Delete
-          </button>
-          <button 
-            onClick={handleEdit}
-            className="btn btn-warning btn-sm px-4 py-2"
-          >
-            Edit
-          </button>
-        </div>
+        {isLoggedIn && (
+          <div className="card-actions justify-end gap-2">
+            <button 
+              onClick={handleDelete}
+              className="btn btn-error btn-sm px-4 py-2"
+            >
+              Delete
+            </button>
+            <button 
+              onClick={handleEdit}
+              className="btn btn-warning btn-sm px-4 py-2"
+            >
+              Edit
+            </button>
+          </div>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Card
+export default Card;

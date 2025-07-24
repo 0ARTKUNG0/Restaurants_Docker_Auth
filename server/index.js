@@ -20,17 +20,19 @@ app.use(express.urlencoded({extended:true}));
 const initializeDatabase = async () => {
   try {
     // Sync all models and create tables
-    await db.sequelize.sync({ force: true });
-    console.log("Database synchronized");
+    // Set force: false in production or when you want to preserve data
+    // await db.sequelize.sync({ force: false }); // Changed from true to false
+    // console.log("Database synchronized");
 
-    // Create default roles
+    // Check if roles already exist before creating
     const Role = db.Role;
-    await Role.bulkCreate([
-      { name: "user" },
-      { name: "moderator" },
-      { name: "admin" }
-    ]);
-    console.log("Default roles created");
+      // Only create roles if none exist
+      await Role.bulkCreate([
+        { name: "user" },
+        { name: "moderator" },
+        { name: "admin" }
+      ]);
+      console.log("Default roles created");
   } catch (error) {
     console.error("Database initialization error:", error);
   }
@@ -42,7 +44,7 @@ app.get('/', (req, res) => {
 
 // Use the routes
 app.use('/api/v1/restaurants', restaurantRoutes);
-app.use("/api/v1/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 
 // Initialize database and start server
 initializeDatabase().then(() => {

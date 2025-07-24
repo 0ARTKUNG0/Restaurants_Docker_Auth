@@ -1,10 +1,45 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-    const MenuItem = [
+    const [user, setUser] = useState(null);
+    const navigate = useNavigate();
+    
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            setUser(JSON.parse(userData));
+        }
+        
+        // Listen for storage changes (when user logs in from another tab/component)
+        const handleStorageChange = () => {
+            const userData = localStorage.getItem('user');
+            if (userData) {
+                setUser(JSON.parse(userData));
+            } else {
+                setUser(null);
+            }
+        };
+        
+        window.addEventListener('storage', handleStorageChange);
+        
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, []); // Empty dependency array to run only once on mount
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        setUser(null);
+        navigate('/login');
+    };
+
+    const MenuItem = user ? [
         { name: "Add restaurant", url: "/add-restaurant" },
         { name: "Update Restaurant", url: "/update-restaurant" },
+        { name: "Search", url: "/search" },
+        { name: "About Us", url: "/about-us" },
+    ] : [
         { name: "Search", url: "/search" },
         { name: "About Us", url: "/about-us" },
     ];
@@ -37,15 +72,33 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="navbar-end space-x-2">
-        <Link to="/add-restaurant" className="btn btn-outline btn-primary">
-          Add restaurant
-        </Link>
-        <Link to="/search" className="btn btn-outline btn-accent">
-          Search
-        </Link>
-        <Link to="/about-us" className="btn btn-outline btn-info">
-          About Us
-        </Link>
+        {user ? (
+          <>
+            <Link to="/add-restaurant" className="btn btn-outline btn-primary">
+              Add Restaurant
+            </Link>
+            <div className="dropdown dropdown-end">
+              <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                <div className="w-10 rounded-full">
+                  <img alt="User Avatar" src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+                </div>
+              </div>
+              <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+                <li><a>{user.username}</a></li>
+                <li><a onClick={handleLogout}>Logout</a></li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-ghost">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-primary">
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </div>
   )
