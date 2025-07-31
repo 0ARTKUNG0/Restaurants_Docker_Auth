@@ -1,5 +1,6 @@
 import React from 'react'
-import fetchWithAuth from '../utils/api'
+import restaurantService from '../service/restairants.service'
+import Swal from 'sweetalert2';
 
 const Card = (props) => {
   // Check if user is logged in
@@ -7,23 +8,47 @@ const Card = (props) => {
   const isLoggedIn = !!user.accessToken;
 
   const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this restaurant?')) {
-      try {
-        const response = await fetchWithAuth(`/v1/restaurants/${props.id}`, {
-          method: 'DELETE',
-        });
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You want to delete this restaurant? This action cannot be undone!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
 
-        if (response.ok) {
-          alert('Restaurant deleted successfully');
+    if (result.isConfirmed) {
+      try {
+        const response = await restaurantService.deleteRestaurantById(props.id);
+
+        if (response.status === 200 || response.status === 204) {
+          Swal.fire({
+            title: 'Deleted!',
+            text: 'Restaurant deleted successfully',
+            icon: 'success',
+            confirmButtonText: 'OK'
+          });
           if (props.onDelete) {
             props.onDelete(props.id);
           }
         } else {
-          alert('Failed to delete restaurant');
+          Swal.fire({
+            title: 'Error!',
+            text: 'Failed to delete restaurant: ' + (response.data?.message || 'Unknown error'),
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
         }
       } catch (error) {
         console.error('Error deleting restaurant:', error);
-        alert('Error deleting restaurant');
+        Swal.fire({
+          title: 'Error!',
+          text: 'Error deleting restaurant: ' + (error.response?.data?.message || error.message),
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
       }
     }
   };

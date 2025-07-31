@@ -77,7 +77,7 @@ authController.login = async (req, res) => {
     // Compare password
     const passwordIsValid = bcrypt.compareSync(password, user.password);
     if (!passwordIsValid) {
-      res.status(401).send({message: "You Stupid Password is not valid!",});
+      res.status(401).send({message: "You Stupid Password is not Correct!",});
       return;
     }
     // Create token

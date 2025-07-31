@@ -1,7 +1,8 @@
 import React from 'react'
 import { useParams } from 'react-router'
 import Navbar from '../Component/Navbar'
-import fetchWithAuth from '../utils/api';
+import restaurantService from '../service/restairants.service';
+import Swal from 'sweetalert2';
 
 const UpdateRestaurant = () => {
     const { id } = useParams();
@@ -12,15 +13,21 @@ const UpdateRestaurant = () => {
     });
 
     React.useEffect(() => {
-        fetchWithAuth(`/v1/restaurants/${id}`)
-            .then((response) => response.json())
-            .then((data) => {
+        const fetchRestaurant = async () => {
+            try {
+                const response = await restaurantService.getRestaurantById(id);
+                const data = response.data;
                 setRestaurant({
                     title: data.name || '',
                     type: data.type || '',
                     img: data.imageURL || ''
                 });
-            });
+            } catch (error) {
+                console.error('Error fetching restaurant:', error);
+            }
+        };
+        
+        fetchRestaurant();
     }, [id]);
 
     const handleChange = (e) => {
@@ -38,20 +45,33 @@ const UpdateRestaurant = () => {
         };
 
         try {
-            const response = await fetchWithAuth(`/v1/restaurants/${id}`, {
-                method: 'PUT',
-                body: JSON.stringify(updatedRestaurant),
-            });
+            const response = await restaurantService.editRestaurantById(id, updatedRestaurant);
 
-            if (response.ok) {
-                alert('Restaurant updated successfully');
-                window.location.href = '/';
+            if (response.status === 200 || response.status === 201) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Restaurant updated successfully',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    window.location.href = '/';
+                });
             } else {
-                alert('Failed to update restaurant');
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to update restaurant: ' + (response.data.message || 'Unknown error'),
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
         } catch (error) {
             console.log('Error updating restaurant:', error);
-            alert('Error updating restaurant');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error updating restaurant: ' + (error.response?.data?.message || error.message),
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
         }
     };
 

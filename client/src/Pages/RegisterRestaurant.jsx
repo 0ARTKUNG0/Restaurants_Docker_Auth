@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Component/Navbar';
+import authService from '../service/auth.service';
+import Swal from 'sweetalert2';
 
 const RegisterRestaurant = () => {
   const [values, setValues] = useState({
@@ -32,29 +34,46 @@ const RegisterRestaurant = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: values.username,
-          name: values.name,
-          email: values.email,
-          password: values.password
-        }),
-      });
+      const response = await authService.register(
+        values.username,
+        values.name,
+        values.email,
+        values.password
+      );
       
-      const data = await response.json();
-      
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
+        // Show success popup with celebration
+        await Swal.fire({
+          title: 'Account Created! 🎊',
+          html: `
+            <div style="text-align: center;">
+              <h3 style="color: #10B981; margin: 10px 0;">Welcome to Grab Restaurant!</h3>
+              <p>Your account <strong>${values.username}</strong> has been successfully created.</p>
+              <p style="font-size: 14px; color: #6B7280;">You can now login and start managing restaurants!</p>
+            </div>
+          `,
+          icon: 'success',
+          confirmButtonText: 'Go to Login',
+          confirmButtonColor: '#10B981',
+          background: '#1f2937',
+          color: '#ffffff',
+          showClass: {
+            popup: 'animate__animated animate__bounceIn'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+          },
+          timer: 4000,
+          timerProgressBar: true,
+          footer: '<p style="color: #9CA3AF;">🚀 Ready to explore amazing restaurants?</p>'
+        });
         // Registration successful - redirect to login
         navigate('/login');
       } else {
-        setError(data.message || 'Registration failed');
+        setError(response.data?.message || 'Registration failed');
       }
     } catch (err) {
-      setError('Network error or server is not running');
+      setError(err.response?.data?.message || 'Network error or server is not running');
     } finally {
       setLoading(false);
     }

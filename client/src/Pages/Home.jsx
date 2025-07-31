@@ -1,27 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../Component/Navbar';
 import Restaurant from '../Component/Restaurant';
+import restaurantService from '../service/restairants.service';
 
 const Home = () => {
   const [restaurants, setRestaurants] = useState([]);
   const [filteredRestaurants, setFilteredRestaurants] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchRestaurants = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/v1/restaurants');
-      const data = await response.json();
-      setRestaurants(data);
-      setFilteredRestaurants(data);
-      setLoading(false);
-    } catch (error) {
-      console.error('Error ไม่สามารถดู restaurants ได้:', error);
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+    
+    const fetchRestaurants = async () => {
+      try {
+        const response = await restaurantService.getAllRestaurants();
+        const data = response.data;
+        
+        if (isMounted) {
+          setRestaurants(data);
+          setFilteredRestaurants(data);
+          setLoading(false);
+        }
+      } catch (error) {
+        if (isMounted) {
+          console.error('Error ไม่สามารถดู restaurants ได้:', error);
+          setLoading(false);
+        }
+      }
+    };
+
     fetchRestaurants();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSearch = (e) => {
@@ -37,9 +49,18 @@ const Home = () => {
     }
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setLoading(true);
-    fetchRestaurants();
+    try {
+      const response = await restaurantService.getAllRestaurants();
+      const data = response.data;
+      setRestaurants(data);
+      setFilteredRestaurants(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error ไม่สามารถดู restaurants ได้:', error);
+      setLoading(false);
+    }
   };
 
   if (loading) {

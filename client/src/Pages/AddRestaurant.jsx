@@ -1,6 +1,7 @@
 import React from 'react'
 import Navbar from '../Component/Navbar'
-import fetchWithAuth from '../utils/api';
+import restaurantService from '../service/restairants.service';
+import Swal from 'sweetalert2';
 
 const AddRestaurant = () => {
     const [restaurant, setRestaurant] = React.useState({
@@ -18,7 +19,15 @@ const AddRestaurant = () => {
         e.preventDefault();
 
         if (!restaurant.title || !restaurant.type || !restaurant.img) {
-            alert('Please fill in all fields.');
+            Swal.fire({
+                title: 'Missing Information',
+                text: 'Please fill in all fields.',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#F59E0B',
+                background: '#1f2937',
+                color: '#ffffff'
+            });
             return;
         }
 
@@ -32,21 +41,44 @@ const AddRestaurant = () => {
         console.log('Submitting payload:', newRestaurant);
 
         try {
-            const response = await fetchWithAuth('/v1/restaurants', {
-                method: 'POST',
-                body: JSON.stringify(newRestaurant),
-            });
-
-            if (response.ok) {
-                alert('Restaurant added successfully');
+            const response = await restaurantService.insertRestaurant(newRestaurant);
+            
+            if (response.status === 200 || response.status === 201) {
+                Swal.fire({
+                    title: 'Success! 🎉',
+                    text: 'Restaurant added successfully',
+                    icon: 'success',
+                    confirmButtonText: 'Great!',
+                    confirmButtonColor: '#10B981',
+                    background: '#1f2937',
+                    color: '#ffffff',
+                    showClass: {
+                        popup: 'animate__animated animate__bounceIn'
+                    }
+                });
                 setRestaurant({ title: '', type: '', img: '' });
             } else {
-                const errorData = await response.json().catch(() => ({}));
-                alert('Failed to add restaurant: ' + (errorData.message || response.statusText));
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to add restaurant: ' + (response.data.message || 'Unknown error'),
+                    icon: 'error',
+                    confirmButtonText: 'Try Again',
+                    confirmButtonColor: '#EF4444',
+                    background: '#1f2937',
+                    color: '#ffffff'
+                });
             }
         } catch (error) {
             console.log('Error adding restaurant:', error);
-            alert('Error adding restaurant');
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error adding restaurant: ' + (error.response?.data?.message || error.message),
+                icon: 'error',
+                confirmButtonText: 'Try Again',
+                confirmButtonColor: '#EF4444',
+                background: '#1f2937',
+                color: '#ffffff'
+            });
         }
     };
 

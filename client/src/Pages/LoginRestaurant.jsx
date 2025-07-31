@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Component/Navbar';
+import authService from '../service/auth.service';
+import Swal from 'sweetalert2';
 
 const LoginRestaurant = () => {
   const [values, setValues] = useState({
@@ -15,27 +17,33 @@ const LoginRestaurant = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/auth/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: values.username,
-          password: values.password,
-        }),
-      });
+      const response = await authService.login(values.username, values.password);
       
-      const data = await response.json();
-      
-      if (response.ok && data.accessToken) {
-        localStorage.setItem('user', JSON.stringify(data));
+      if (response.data && response.data.accessToken) {
+        // Show success popup with animation
+        await Swal.fire({
+          title: 'Welcome Back! 🎉',
+          text: `Hello ${response.data.username}! You have successfully logged in.`,
+          icon: 'success',
+          confirmButtonText: 'Let\'s Go!',
+          confirmButtonColor: '#10B981',
+          background: '#1f2937',
+          color: '#ffffff',
+          showClass: {
+            popup: 'animate__animated animate__fadeInUp'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutDown'
+          },
+          timer: 3000,
+          timerProgressBar: true
+        });
         navigate('/');
       } else {
-        setError(data.message || 'Login failed');
+        setError(response.data?.message || 'Login failed');
       }
     } catch (err) {
-      setError('Network error or server is not running');
+      setError(err.response?.data?.message || 'Network error or server is not running');
     } finally {
       setLoading(false);
     }
