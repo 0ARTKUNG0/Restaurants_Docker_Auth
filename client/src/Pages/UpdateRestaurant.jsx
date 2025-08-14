@@ -1,11 +1,14 @@
 import React from 'react'
-import { useParams } from 'react-router'
+import { useParams, useNavigate } from 'react-router'
 import Navbar from '../Component/Navbar'
-import restaurantService from '../service/restairants.service';
+import { useAuthContext } from '../context/authcontext'
+import restaurantService from '../service/restaurants.service';
 import Swal from 'sweetalert2';
 
 const UpdateRestaurant = () => {
     const { id } = useParams();
+    const { isAuthenticated } = useAuthContext();
+    const navigate = useNavigate();
     const [restaurant, setRestaurant] = React.useState({
         title: '',
         type: '',
@@ -13,6 +16,22 @@ const UpdateRestaurant = () => {
     });
 
     React.useEffect(() => {
+        // Check authentication
+        if (!isAuthenticated) {
+            Swal.fire({
+                title: 'Access Denied',
+                text: 'You need to login to update restaurants.',
+                icon: 'error',
+                confirmButtonText: 'Go to Login',
+                confirmButtonColor: '#EF4444',
+                background: '#1f2937',
+                color: '#ffffff'
+            }).then(() => {
+                navigate('/login');
+            });
+            return;
+        }
+
         const fetchRestaurant = async () => {
             try {
                 const response = await restaurantService.getRestaurantById(id);
@@ -28,7 +47,7 @@ const UpdateRestaurant = () => {
         };
         
         fetchRestaurant();
-    }, [id]);
+    }, [id, isAuthenticated, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

@@ -1,5 +1,5 @@
 import React from 'react'
-import restaurantService from '../service/restairants.service'
+import restaurantService from '../service/restaurants.service'
 import Swal from 'sweetalert2';
 
 const Card = (props) => {

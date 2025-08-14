@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Navbar from '../Component/Navbar';
 import authService from '../service/auth.service';
+import { useAuthContext } from '../context/authcontext';
 import Swal from 'sweetalert2';
 
 const LoginRestaurant = () => {
@@ -12,9 +13,11 @@ const LoginRestaurant = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login: contextLogin } = useAuthContext();
+
   const handleChange = (e) => {
-  const {name, value} = e.target;
-  setLogin({ ...login, [name]: value });
+    const {name, value} = e.target;
+    setLogin({ ...login, [name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -25,6 +28,9 @@ const LoginRestaurant = () => {
     try {
         const currentUser = await authService.login(login.username, login.password);
         if (currentUser.status === 200)  {
+            // Use AuthContext login
+            contextLogin(currentUser.data);
+            
             await Swal.fire({
                 title: 'Login Successful',
                 text: `Welcome back, ${currentUser.data.username}!`,

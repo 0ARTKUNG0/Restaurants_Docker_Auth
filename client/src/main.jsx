@@ -4,9 +4,12 @@ import './index.css'
 import './styles/sweetalert-custom.css'
 import router from './Routes/Routes'
 import { RouterProvider } from 'react-router'
+import { AuthProvider } from './context/authcontext'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>,
 )

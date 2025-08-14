@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Navbar from '../Component/Navbar';
 import authService from '../service/auth.service';
+import { useAuthContext } from '../context/authcontext';
 import Swal from 'sweetalert2';
 
 const RegisterRestaurant = () => {
@@ -15,6 +16,7 @@ const RegisterRestaurant = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { login: contextLogin } = useAuthContext();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

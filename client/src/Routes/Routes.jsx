@@ -4,7 +4,7 @@ import AddRestaurant from "../Pages/AddRestaurant";
 import UpdateRestaurant from "../Pages/UpdateRestaurant";
 import LoginRestaurant from "../Pages/LoginRestaurant";
 import RegisterRestaurant from "../Pages/RegisterRestaurant";
-import ProtectedRoute from "../Component/ProtectedRoute";
+import ProfilePage from "../Pages/ProfilePage";
 
 const router = createBrowserRouter([
     {
@@ -13,19 +13,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/add-restaurant",
-        element: (
-            <ProtectedRoute>
-                <AddRestaurant />
-            </ProtectedRoute>
-        ),
+        element: <AddRestaurant />,
     },
     {
         path: "/update-restaurant/:id",
-        element: (
-            <ProtectedRoute>
-                <UpdateRestaurant />
-            </ProtectedRoute>
-        ),
+        element: <UpdateRestaurant />,
     },
     {
         path: "/login",
@@ -34,6 +26,10 @@ const router = createBrowserRouter([
     {
         path: "/register",
         element: <RegisterRestaurant />,
+    },
+    {
+        path: "/profile",
+        element: <ProfilePage />,
     },
 ]);
 

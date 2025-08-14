@@ -1,14 +1,35 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router'
 import Navbar from '../Component/Navbar'
-import restaurantService from '../service/restairants.service';
+import { useAuthContext } from '../context/authcontext'
+import restaurantService from '../service/restaurants.service';
 import Swal from 'sweetalert2';
 
 const AddRestaurant = () => {
+    const { isAuthenticated } = useAuthContext();
+    const navigate = useNavigate();
     const [restaurant, setRestaurant] = React.useState({
         title: '',
         type: '',
         img: '',
     });
+
+    // Check authentication
+    useEffect(() => {
+        if (!isAuthenticated) {
+            Swal.fire({
+                title: 'Access Denied',
+                text: 'You need to login to add restaurants.',
+                icon: 'error',
+                confirmButtonText: 'Go to Login',
+                confirmButtonColor: '#EF4444',
+                background: '#1f2937',
+                color: '#ffffff'
+            }).then(() => {
+                navigate('/login');
+            });
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
