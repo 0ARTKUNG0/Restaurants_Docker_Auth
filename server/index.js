@@ -19,20 +19,24 @@ app.use(express.urlencoded({extended:true}));
 
 const initializeDatabase = async () => {
   try {
-    // Sync all models and create tables
-    // Set force: false in production or when you want to preserve data
-    // await db.sequelize.sync({ force: false }); // Changed from true to false
-    // console.log("Database synchronized");
-
-    // Check if roles already exist before creating
     const Role = db.Role;
-      // Only create roles if none exist
-      await Role.bulkCreate([
-        { name: "user" },
-        { name: "moderator" },
-        { name: "admin" }
-      ]);
-      console.log("Default roles created");
+    
+    // Check existing roles
+    const existingRoles = await Role.findAll();
+    const roleNames = existingRoles.map(role => role.name);
+
+    // Define default roles
+    const defaultRoles = ["user", "moderator", "admin"];
+    
+    // Filter out roles that don't exist yet
+    const rolesToCreate = defaultRoles.filter(role => !roleNames.includes(role));
+
+    if (rolesToCreate.length > 0) {
+      await Role.bulkCreate(rolesToCreate.map(name => ({ name })));
+      console.log("Created missing roles:", rolesToCreate);
+    } else {
+      console.log("All default roles already exist");
+    }
   } catch (error) {
     console.error("Database initialization error:", error);
   }

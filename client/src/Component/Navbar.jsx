@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 
 const Navbar = () => {
     const [user, setUser] = useState(null);
@@ -10,7 +10,6 @@ const Navbar = () => {
         if (userData) {
             setUser(JSON.parse(userData));
         }
-        
         // Listen for storage changes (when user logs in from another tab/component)
         const handleStorageChange = () => {
             const userData = localStorage.getItem('user');
@@ -20,20 +19,16 @@ const Navbar = () => {
                 setUser(null);
             }
         };
-        
         window.addEventListener('storage', handleStorageChange);
-        
         return () => {
             window.removeEventListener('storage', handleStorageChange);
         };
     }, []); // Empty dependency array to run only once on mount
-
     const handleLogout = () => {
         localStorage.removeItem('user');
         setUser(null);
         navigate('/login');
     };
-
     const MenuItem = user ? [
         { name: "Add restaurant", url: "/add-restaurant" },
         { name: "Update Restaurant", url: "/update-restaurant" },

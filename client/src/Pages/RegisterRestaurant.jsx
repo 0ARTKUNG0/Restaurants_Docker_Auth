@@ -1,86 +1,88 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import Navbar from '../Component/Navbar';
 import authService from '../service/auth.service';
 import Swal from 'sweetalert2';
 
 const RegisterRestaurant = () => {
-  const [values, setValues] = useState({
+  const [register, setRegister] = useState({
     username: '',
     name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setRegister({ ...register, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    setLoading(true);
+    setError('');
+
     // Validate passwords match
-    if (values.password !== values.confirmPassword) {
+    if (register.password !== register.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(values.email)) {
+    if (!emailRegex.test(register.email)) {
       setError('Please enter a valid email address');
+      setLoading(false);
       return;
     }
 
-    setLoading(true);
     try {
       const response = await authService.register(
-        values.username,
-        values.name,
-        values.email,
-        values.password
+        register.username,
+        register.name,
+        register.email,
+        register.password
       );
       
       if (response.status === 200 || response.status === 201) {
-        // Show success popup with celebration
         await Swal.fire({
-          title: 'Account Created! 🎊',
-          html: `
-            <div style="text-align: center;">
-              <h3 style="color: #10B981; margin: 10px 0;">Welcome to Grab Restaurant!</h3>
-              <p>Your account <strong>${values.username}</strong> has been successfully created.</p>
-              <p style="font-size: 14px; color: #6B7280;">You can now login and start managing restaurants!</p>
-            </div>
-          `,
+          title: 'Registration Successful',
+          text: `Welcome, ${register.username}! Your account has been created.`,
           icon: 'success',
           confirmButtonText: 'Go to Login',
           confirmButtonColor: '#10B981',
           background: '#1f2937',
           color: '#ffffff',
           showClass: {
-            popup: 'animate__animated animate__bounceIn'
+            popup: 'animate__animated animate__fadeInUp'
           },
           hideClass: {
-            popup: 'animate__animated animate__fadeOut'
+            popup: 'animate__animated animate__fadeOutDown'
           },
-          timer: 4000,
-          timerProgressBar: true,
-          footer: '<p style="color: #9CA3AF;">🚀 Ready to explore amazing restaurants?</p>'
+          timer: 3000,
+          timerProgressBar: true
         });
-        // Registration successful - redirect to login
         navigate('/login');
-      } else {
-        setError(response.data?.message || 'Registration failed');
       }
-    } catch (err) {
-      setError(err.response?.data?.message || 'Network error or server is not running');
+    } catch (error) {
+      setError(error.response?.data?.message || 'An error occurred during registration');
+      Swal.fire({
+        title: 'Registration Failed',
+        text: error.response?.data?.message || 'An error occurred during registration',
+        icon: 'error',
+        confirmButtonText: 'Try Again',
+        confirmButtonColor: '#EF4444',
+        background: '#1f2937',
+        color: '#ffffff'
+      });
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleChange = (e) => {
-    setValues({ ...values, [e.target.name]: e.target.value });
   };
 
   return (
@@ -104,9 +106,9 @@ const RegisterRestaurant = () => {
                     <input
                       type="text"
                       name="username"
-                      value={values.username}
+                      value={register.username}
                       onChange={handleChange}
-                      placeholder="Choose a username"
+                      placeholder="Enter your username"
                       className="input input-bordered w-full"
                       required
                     />
@@ -119,7 +121,7 @@ const RegisterRestaurant = () => {
                     <input
                       type="text"
                       name="name"
-                      value={values.name}
+                      value={register.name}
                       onChange={handleChange}
                       placeholder="Enter your full name"
                       className="input input-bordered w-full"
@@ -135,9 +137,9 @@ const RegisterRestaurant = () => {
                   <input
                     type="email"
                     name="email"
-                    value={values.email}
+                    value={register.email}
                     onChange={handleChange}
-                    placeholder="Enter your email address"
+                    placeholder="Enter your email"
                     className="input input-bordered w-full"
                     required
                   />
@@ -151,9 +153,9 @@ const RegisterRestaurant = () => {
                     <input
                       type="password"
                       name="password"
-                      value={values.password}
+                      value={register.password}
                       onChange={handleChange}
-                      placeholder="Create a password"
+                      placeholder="Enter your password"
                       className="input input-bordered w-full"
                       required
                     />
@@ -166,7 +168,7 @@ const RegisterRestaurant = () => {
                     <input
                       type="password"
                       name="confirmPassword"
-                      value={values.confirmPassword}
+                      value={register.confirmPassword}
                       onChange={handleChange}
                       placeholder="Confirm your password"
                       className="input input-bordered w-full"
