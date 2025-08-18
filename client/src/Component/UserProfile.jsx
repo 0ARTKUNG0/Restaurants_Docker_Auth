@@ -50,7 +50,9 @@ const UserProfile = () => {
                 <li>
                     <a className="justify-between">
                         {user?.username}
-                        <span className="badge">User</span>
+                        <span className="badge">
+                          {user?.roleId === 2 ? 'Moderator' : user?.roleId > 2 ? 'Admin' : 'User'}
+                        </span>
                     </a>
                 </li>
                 <li>

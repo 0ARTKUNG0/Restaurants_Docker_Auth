@@ -1,4 +1,5 @@
-import { useState } from 'react';
+
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Navbar from '../Component/Navbar';
 import authService from '../service/auth.service';
@@ -13,7 +14,7 @@ const LoginRestaurant = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login: contextLogin } = useAuthContext();
+  const { user, login: contextLogin } = useAuthContext();
 
   const handleChange = (e) => {
     const {name, value} = e.target;

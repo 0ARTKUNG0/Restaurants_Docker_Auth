@@ -5,7 +5,9 @@ import Swal from 'sweetalert2';
 const Card = (props) => {
   // Check if user is logged in
   const user = JSON.parse(localStorage.getItem('user') || '{}');
-  const isLoggedIn = !!user.accessToken;
+  const authorities = user.authorities || [];
+  const showEdit = authorities.includes('ROLE_ADMIN') || authorities.includes('ROLE_MODERATOR');
+  const showDelete = authorities.includes('ROLE_ADMIN');
 
   const handleDelete = async () => {
     const result = await Swal.fire({
@@ -69,20 +71,24 @@ const Card = (props) => {
       <div className="card-body p-4 text-white">
         <h2 className="card-title text-white text-lg font-semibold mb-2">{props.name}</h2>
         <p className="text-gray-300 text-sm mb-4">{props.type}</p>
-        {isLoggedIn && (
+        {(showEdit || showDelete) && (
           <div className="card-actions justify-end gap-2">
-            <button 
-              onClick={handleDelete}
-              className="btn btn-error btn-sm px-4 py-2"
-            >
-              Delete
-            </button>
-            <button 
-              onClick={handleEdit}
-              className="btn btn-warning btn-sm px-4 py-2"
-            >
-              Edit
-            </button>
+            {showDelete && (
+              <button 
+                onClick={handleDelete}
+                className="btn btn-error btn-sm px-4 py-2"
+              >
+                Delete
+              </button>
+            )}
+            {showEdit && (
+              <a 
+                href={"/update-restaurant/" + props.id}
+                className="btn btn-warning btn-sm px-4 py-2"
+              >
+                Edit
+              </a>
+            )}
           </div>
         )}
       </div>

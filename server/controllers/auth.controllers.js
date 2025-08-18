@@ -87,17 +87,19 @@ authController.login = async (req, res) => {
     // Get roles
     const authorities = [];
     user.getRoles().then((roles) => {
+      console.log('User roles for', user.username, ':', roles.map(r => r.name));
       for(let i = 0; i < roles.length; i++) {
-        //ROLES_USER
         authorities.push("ROLE_" + roles[i].name.toUpperCase());
       }
       res.status(200).send({
-      accessToken: token,
-      username: user.username,
-      name: user.name,
-      email: user.email,
-      authorities: authorities,
-    });
+        accessToken: token,
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        authorities: authorities,
+        roleId: roles[0]?.id ?? null, // send first role id if exists
+      });
     });
   })
   .catch((error) => {

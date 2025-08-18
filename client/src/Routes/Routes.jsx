@@ -5,6 +5,7 @@ import UpdateRestaurant from "../Pages/UpdateRestaurant";
 import LoginRestaurant from "../Pages/LoginRestaurant";
 import RegisterRestaurant from "../Pages/RegisterRestaurant";
 import ProfilePage from "../Pages/ProfilePage";
+import NotAllowed from "../Pages/NotAllowed";
 
 const router = createBrowserRouter([
     {
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
     {
         path: "/profile",
         element: <ProfilePage />,
+    },
+    {
+        path: "/not-allowed",
+        element: <NotAllowed />,
     },
 ]);
 

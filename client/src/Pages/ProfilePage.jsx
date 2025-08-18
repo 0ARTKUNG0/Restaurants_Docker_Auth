@@ -101,9 +101,10 @@ const ProfilePage = () => {
                                         <span className="label-text font-semibold">Role</span>
                                     </label>
                                     <div className="input input-bordered flex items-center">
-                                        <span className="badge badge-primary">User</span>
+                                        <span className="badge badge-primary">{user?.roleId === 2 ? 'Moderator' : user?.roleId > 2 ? 'Admin' : 'User'}</span>
                                     </div>
                                 </div>
+                                <p className="text-gray-400 mb-2">Role ID: {user?.roleId ?? '-'}</p>
                             </div>
 
                             <div className="card-actions justify-center mt-6">

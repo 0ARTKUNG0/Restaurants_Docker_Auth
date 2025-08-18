@@ -1,13 +1,12 @@
 import React from 'react'
 import { useParams, useNavigate } from 'react-router'
 import Navbar from '../Component/Navbar'
-import { useAuthContext } from '../context/authcontext'
+import ModAndAdminPage from './ModAndAdminPage.jsx'
 import restaurantService from '../service/restaurants.service';
 import Swal from 'sweetalert2';
 
 const UpdateRestaurant = () => {
     const { id } = useParams();
-    const { isAuthenticated } = useAuthContext();
     const navigate = useNavigate();
     const [restaurant, setRestaurant] = React.useState({
         title: '',
@@ -16,22 +15,6 @@ const UpdateRestaurant = () => {
     });
 
     React.useEffect(() => {
-        // Check authentication
-        if (!isAuthenticated) {
-            Swal.fire({
-                title: 'Access Denied',
-                text: 'You need to login to update restaurants.',
-                icon: 'error',
-                confirmButtonText: 'Go to Login',
-                confirmButtonColor: '#EF4444',
-                background: '#1f2937',
-                color: '#ffffff'
-            }).then(() => {
-                navigate('/login');
-            });
-            return;
-        }
-
         const fetchRestaurant = async () => {
             try {
                 const response = await restaurantService.getRestaurantById(id);
@@ -47,7 +30,7 @@ const UpdateRestaurant = () => {
         };
         
         fetchRestaurant();
-    }, [id, isAuthenticated, navigate]);
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -95,11 +78,12 @@ const UpdateRestaurant = () => {
     };
 
     return (
-        <div className="min-h-screen bg-base-200">
-            <Navbar />
-            <div className="flex flex-col items-center justify-center mt-10">
-                <h1 className="text-4xl font-bold mb-6">Update Restaurant</h1>
-                <div className="card w-full max-w-md bg-base-100 shadow-xl">
+        <ModAndAdminPage>
+            <div className="min-h-screen bg-base-200">
+                <Navbar />
+                <div className="flex flex-col items-center justify-center mt-10">
+                    <h1 className="text-4xl font-bold mb-6">Update Restaurant</h1>
+                    <div className="card w-full max-w-md bg-base-100 shadow-xl">
                     <figure className="px-10 pt-10">
                         <img
                             src={restaurant.img || "https://media.istockphoto.com/id/2171382633/vector/user-profile-icon-anonymous-person-symbol-blank-avatar-graphic-vector-illustration.jpg?s=612x612&w=0&k=20&c=ZwOF6NfOR0zhYC44xOX06ryIPAUhDvAajrPsaZ6v1-w="}
@@ -160,7 +144,8 @@ const UpdateRestaurant = () => {
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
+        </ModAndAdminPage>
     )
 }
 
