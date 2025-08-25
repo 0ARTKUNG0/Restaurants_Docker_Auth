@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuthContext } from '../context/authcontext';
+import AdminPage from '../Pages/AdminPage';
 import UserProfile from './UserProfile';
 import Swal from 'sweetalert2';
 
