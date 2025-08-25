@@ -69,7 +69,7 @@ const UpdateRestaurant = () => {
                     icon: 'error',
                     confirmButtonText: 'OK',
                     background: '#2a2e37',
-                    color: '#ffffff',
+                    // color: '#ffffff',
                     confirmButtonColor: '#ef4444',
                     iconColor: '#ef4444'
                 });
