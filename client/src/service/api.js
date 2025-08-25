@@ -2,7 +2,7 @@ import axios from 'axios';
 import tokenService from './token.service';
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-const instant = axios.create({
+const instance = axios.create({
     baseURL: baseURL,
     headers: {
         'Content-Type': 'application/json',
@@ -10,7 +10,7 @@ const instant = axios.create({
 });
 
 // add interceptors for request object
-instant.interceptors.request.use(
+instance.interceptors.request.use(
     (config) => {
         const token = tokenService.getlocalAccessToken();
         if (token) {
@@ -23,4 +23,4 @@ instant.interceptors.request.use(
     }
 );
 
-export default instant;
+export default instance;

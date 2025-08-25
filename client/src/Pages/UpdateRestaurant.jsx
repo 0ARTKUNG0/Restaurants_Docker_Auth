@@ -54,7 +54,11 @@ const UpdateRestaurant = () => {
                     title: 'Success!',
                     text: 'Restaurant updated successfully',
                     icon: 'success',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    background: '#2a2e37',
+                    // color: '#ffffff',
+                    confirmButtonColor: '#10b981',
+                    iconColor: '#10b981'
                 }).then(() => {
                     window.location.href = '/';
                 });
@@ -63,7 +67,11 @@ const UpdateRestaurant = () => {
                     title: 'Error!',
                     text: 'Failed to update restaurant: ' + (response.data.message || 'Unknown error'),
                     icon: 'error',
-                    confirmButtonText: 'OK'
+                    confirmButtonText: 'OK',
+                    background: '#2a2e37',
+                    color: '#ffffff',
+                    confirmButtonColor: '#ef4444',
+                    iconColor: '#ef4444'
                 });
             }
         } catch (error) {
