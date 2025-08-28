@@ -1,7 +1,7 @@
 import db from "../model/index.js";
 const User = db.User;
 const Role = db.Role;
-import config from "../config/auth.config.js"; // Import the auth config for JWT secret
+import config from "../config/auth.config.js"; // Fixed import back to default import
 import bcrypt from "bcryptjs"; //ใช้ในการเข้ารหัสรหัสผ่าน
 import jwt from "jsonwebtoken"; //ใช้ในการแลกเปลี่ยนข้อมูลระหว่างเซิร์ฟเวอร์และไคลเอนต์
 import { Op } from "sequelize"; //ใช้ในการจัดการกับการค้นหาข้อมูลในฐานข้อมูล
@@ -81,7 +81,7 @@ authController.login = async (req, res) => {
       return;
     }
     // Create token
-    const token = jwt.sign({ username: user.username }, config.secret, {
+    const token = jwt.sign({ id: user.id, username: user.username }, config.secret, {
       expiresIn: 86400, // 24 hours
     });
     // Get roles
